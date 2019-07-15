@@ -1,0 +1,30 @@
+import { withRouter } from 'next/router'
+import BlogPost from '../../components/layouts/blog-post'
+
+export const meta = {
+  published: true,
+  publishedAt: '2018-07-15',
+  title: 'Linux System Programming by Robert Love',
+  summary: 'Reading Notes',
+  image: '/static/site-feature.png',
+}
+
+export default withRouter(({ children, router }) => (
+  <BlogPost path={router.pathname} meta={meta}>
+    {children}
+  </BlogPost>
+))
+
+#### Chapter 1 - Introduction
+
+- processes inherit the UID and GID
+- permission octal values: r=4, w=2, x=1. Order is user, group, everyone else
+- functions normally just return a -1 to indicate an error
+- more details to be found in `extern int errno` in `<errno.h>`
+- to print `void perror(const char *str)` in `<stdio.h>`
+- example:
+
+```
+if (close (fd) == −1)
+        perror ("close");
+```
