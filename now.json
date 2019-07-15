@@ -1,7 +1,7 @@
 {
   "version": 2,
   "name": "xmonkee",
-  "alias": ["xmonkee.now.sh"],
+  "alias": ["xmonkee.com"],
   "builds": [{ "src": "package.json", "use": "@now/next" }],
   "routes": [
     { "src": "/feed.json", "dest": "/_next/static/feed.json" },
