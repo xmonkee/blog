@@ -222,8 +222,8 @@ int main(int arc, char **argv) {
 - other
 ```c
 int fseek (FILE *stream, long offset, int whence);
-fsetpos, rewind, ftell, fgetpos
-fflush flushes the data to the kernel
+// fsetpos, rewind, ftell, fgetpos for seeking
+// fflush flushes the data to the kernel (but does not sync)
 fileno(*stream) gets the fd
 ```
 - errors
@@ -234,9 +234,68 @@ clearerr() clears the error
 ```
 ##### Threading
 - Standard io functions are thread safe
-- For multipel functions, use explicit locks
+- For multipl functions, use explicit locks
 ```c
 flockfile(*stream) locks a file (blocking) by incrementing lock count
 funlockfile(*stream) decrements lock count
 ftrylockfile(*stream) is non-blocking, returning nonzero if cannot lock
+```
+
+#### Chapter 4: Advanced File I/O
+##### Scatter/Gather I/O
+- The idea is to write several buffers to a file or to read several buffers from a file
+- The buffers are read and written in serial order, but very efficiently by the kernel
+```c
+#include <sys/uio.h>
+struct iovec {
+  void *iov_base;
+  size_t iov_len;
+};
+ssize_t readv (int fd, const struct iovec *iov, int count);
+ssize_t writev (int fd, const struct iovec *iov, int count);
+```
+##### epoll
+- easier to use than `poll` and `select`, but linux specific 
+- decouples creating a listener, adding fds and waiting on it
+```c
+#include <stdio.h>
+#include <sys/epoll.h>
+#include <unistd.h>
+int main() {
+    int epfd = epoll_create1(0);
+    struct epoll_event events[2];
+    events[0].events = EPOLLIN;
+    events[0].data.fd = STDIN_FILENO;
+    events[1].events = EPOLLOUT;
+    events[1].data.fd = STDOUT_FILENO;
+    if(epoll_ctl(epfd, EPOLL_CTL_ADD, STDIN_FILENO, &events[0]) == -1) {
+        perror("epoll_ctl");
+        return 1;
+    }
+    if(epoll_ctl(epfd, EPOLL_CTL_ADD, STDOUT_FILENO, &events[1]) == -1) {
+        perror("epoll_ctl");
+        return 1;
+    }
+
+    struct epoll_event out_events[2];
+    int events_ready = epoll_wait(epfd, out_events, 2, 0);
+    if(events_ready == -1) {
+        perror("epoll_wait");
+        return 1;
+    }
+
+    printf("Events Ready: %d\\n", events_ready);
+    for(int i = 0; i < events_ready; i++) {
+        printf("Event fd: %i: %i\\n", out_events[i].events, out_events[i].data.fd);
+    }
+    return 0;
+}
+```
+
+##### MMAP
+
+- mmap maps a file into memory
+```c
+#include <sys/mman.h>
+void * mmap (void *addr, size_t len, int prot, int flags, int fd, off_t offset);
 ```
