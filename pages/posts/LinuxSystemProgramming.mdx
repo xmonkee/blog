@@ -299,3 +299,161 @@ int main() {
 #include <sys/mman.h>
 void * mmap (void *addr, size_t len, int prot, int flags, int fd, off_t offset);
 ```
+- `prot` is protection mode - `PROT_READ`, `PROT_WRITE`, `PROT_EXEC`
+- it should match the open mode of the file
+- flags:
+  - MAX_FIXED - addr is a requirement, not optional (discouraged)
+  - MAP_PRIVATE - file is mapped copy-on-write
+  - MAP_SHARED - shared with other processes that map this file
+  - one of the previous two must be specified, but not both
+- mapping increments the file's reference counter
+- `addr` and `offset` must be aligned on a page boundary
+- to get page size
+```
+long page_size = sysconf(_SC_PAGESIZE); // <unistd.h>
+// or
+int getpagesize(void);
+```
+- to remove mapping:
+```
+int munmap(void *arrd, size_t len);
+```
+- will remove all mappings in the given range
+- example
+```c
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/mman.h>
+#include <stdio.h>
+
+int main(int argc, char *argv[]) {
+
+    if (argc != 2) {
+        printf("Must suppy filename\\n"); return 1;
+    }
+
+    int fd = open(argv[1], O_RDONLY);
+    if (fd == -1) {
+        perror("open"); return 1;
+    }
+
+    struct stat sb;
+
+    if (fstat(fd, &sb) == -1) {
+        perror("fstat"); return 1;
+    }
+
+    if (!S_ISREG(sb.st_mode)) {
+        printf("Not a regular file\\n"); return 1;
+    }
+
+    char * p;
+    if ((p = mmap(0, sb.st_size, PROT_READ, MAP_SHARED, fd, 0)) == MAP_FAILED) {
+        perror("mmap"); return 1;
+    }
+
+    for(int i = 0; i < sb.st_size; i++) {
+        putchar(*(p + i));
+    }
+    putchar('\\n');
+
+    if(munmap(p, sb.st_size) == -1) {
+        perror("munmap"); return 1;
+    }
+
+    return 0;
+
+}
+```
+- advantages of mmap:
+	- avoids the extra copy that happens to a user space buffer when using `read` and `write`
+	- there's no system call overhead to read from memory
+	- shared mode lets processes share file
+	- there's no need for lseek
+- `mremap` to change size of mapping
+- glib often uses `mremap` to implement `realloc`
+- `mprotect` to change protection of a mapping
+- `msync` to sync changes back to disk
+	- should always be called because kernel does not know that memory has been modified, unlike `write`'s dirty buffers
+- `madvise` to give the kernel a hint about usage of map
+	- usually related to amount of readahead (more for sequential, none for random)
+- `posix_fadvise` is very similar, but for normal I/O (not mmap)
+
+##### Asynchronous I/O
+
+- The book here is very brief. The following notes are from the aio(7) man page
+
+- The POSIX AIO interface consists of the following functions:
+```
+#include <aiocb.h>
+
+aio_read(3)     Enqueue a read request.  This is the asynchronous analog of read(2).
+aio_write(3)    Enqueue a write request.  This is the asynchronous analog of write(2).
+aio_fsync(3)    Enqueue a sync request for the I/O operations on a file descriptor.  This is the asynchronous analog of fsync(2) and fdatasync(2).
+aio_error(3)    Obtain the error status of an enqueued I/O request.
+aio_return(3)   Obtain the return status of a completed I/O request.
+aio_suspend(3)  Suspend the caller until one or more of a specified set of I/O requests completes.
+aio_cancel(3)   Attempt to cancel outstanding I/O requests on a specified file descriptor.
+lio_listio(3)   Enqueue multiple I/O requests using a single function call.
+
+
+struct aiocb {
+	int             aio_fildes;     /* File descriptor */
+	off_t           aio_offset;     /* File offset */
+	volatile void  *aio_buf;        /* Location of buffer */
+	size_t          aio_nbytes;     /* Length of transfer */
+	int             aio_reqprio;    /* Request priority */
+	struct sigevent aio_sigevent;   /* Notification method */
+	int             aio_lio_opcode; /* Operation to be performed;
+};
+```
+- You can either poll the status of the request (with `aio_error`) or have the completion fire a signal
+- You can ask the request to signal via `aiocbp->aio_sigevent.sigev_notify = SIGEV_SIGNAL`
+- You can also ask it to spawn a thread 
+- If `aio_error` is not EINPROGRESS, you can use `aio_return` to get the return value (of the corresponding `read()` operation for example)
+
+##### I/O Schedulers and I/O performance
+- Scheduler is set in `/sys/block/[device]/queue/scheduler`
+- The scheduler would try to sequence reads and writes on disk efficiently
+- It performs merges (combining reads in adjecent blocks) and sorting
+- Since writes are streamed (async), they can starve the reads (`writes-starving-reads`)
+- The Deadline scheduler 
+	- keeps a sorted list of operations (sorted by physical block)
+	- keeps a FIFO queue of read operations and a FIFO queue of write operations
+	- read ops have a deadline of 500ms and write ops 6s
+	- it goes by sorted list, unless a deadline happens, which get priority
+
+- My current machine with an NMVe SSD disc uses mq-deadline (multiqueue)
+
+
+##### Optimizing IO
+- There are many optimizations that can be done on the application side:
+	- Minimize I/O operations (coalescing)
+	- Perform block aligned I/O
+	- Use buffering
+	- vectored I/O, positional I/O and async I/O
+- We can also sort I/O requests before sending them to the kernel
+- Sectors are mapped to physical blocks so block storage can be addressed by blocks (logical block addressing, LBA) instead of cylinders, heads and sectors
+- Filesystems are purely software, and talk in terms of logical blocks
+- Logical block size is a multiple of physical block size
+- Sorting writes in the application:
+	- One way to do that is pathname -> poor approximation
+	- Another is inode number -> breaks with more fragmentation
+	- Or you can try to sort by physical block:
+		- Each file is broken into logical blocks
+		- You can get the physical block from logical block:
+```c
+ret = ioctl (fd, FIBMAP, &block);
+```
+		- The logical blocks are zero-indexed and file-relative 
+		- First determine number of blocks in a file via `fstat`
+		- Then, for each logical block, find the physical block via `ioctl`
+	- Since files tend to be contiguous and we will mostly want to order I/O for a given file, just use the 0th block to sort:
+```c
+int logical_block = 0;
+ioctl(fd, FIBMAP, &logical_block);
+```
+
+
