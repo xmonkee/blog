@@ -4,7 +4,7 @@ import BlogPost from '../../components/layouts/blog-post'
 export const meta = {
   published: true,
   publishedAt: '2018-07-15',
-  title: 'Linux System Programming by Robert Love',
+  title: 'Linux System Programming by Robert Love [Chapters 1-4]',
   summary: 'Reading Notes',
   image: '/static/site-feature.png',
 }
@@ -309,13 +309,13 @@ void * mmap (void *addr, size_t len, int prot, int flags, int fd, off_t offset);
 - mapping increments the file's reference counter
 - `addr` and `offset` must be aligned on a page boundary
 - to get page size
-```
+```c
 long page_size = sysconf(_SC_PAGESIZE); // <unistd.h>
 // or
 int getpagesize(void);
 ```
 - to remove mapping:
-```
+```c
 int munmap(void *arrd, size_t len);
 ```
 - will remove all mappings in the given range
@@ -368,10 +368,10 @@ int main(int argc, char *argv[]) {
 }
 ```
 - advantages of mmap:
-	- avoids the extra copy that happens to a user space buffer when using `read` and `write`
-	- there's no system call overhead to read from memory
-	- shared mode lets processes share file
-	- there's no need for lseek
+  - avoids the extra copy that happens to a user space buffer when using `read` and `write`
+  - there's no system call overhead to read from memory
+  - shared mode lets processes share file
+  - there's no need for lseek
 - `mremap` to change size of mapping
 - glib often uses `mremap` to implement `realloc`
 - `mprotect` to change protection of a mapping
@@ -386,7 +386,7 @@ int main(int argc, char *argv[]) {
 - The book here is very brief. The following notes are from the aio(7) man page
 
 - The POSIX AIO interface consists of the following functions:
-```
+```c
 #include <aiocb.h>
 
 aio_read(3)     Enqueue a read request.  This is the asynchronous analog of read(2).
@@ -420,40 +420,40 @@ struct aiocb {
 - It performs merges (combining reads in adjecent blocks) and sorting
 - Since writes are streamed (async), they can starve the reads (`writes-starving-reads`)
 - The Deadline scheduler 
-	- keeps a sorted list of operations (sorted by physical block)
-	- keeps a FIFO queue of read operations and a FIFO queue of write operations
-	- read ops have a deadline of 500ms and write ops 6s
-	- it goes by sorted list, unless a deadline happens, which get priority
+  - keeps a sorted list of operations (sorted by physical block)
+  - keeps a FIFO queue of read operations and a FIFO queue of write operations
+  - read ops have a deadline of 500ms and write ops 6s
+  - it goes by sorted list, unless a deadline happens, which get priority
 
 - My current machine with an NMVe SSD disc uses mq-deadline (multiqueue)
 
 
 ##### Optimizing IO
 - There are many optimizations that can be done on the application side:
-	- Minimize I/O operations (coalescing)
-	- Perform block aligned I/O
-	- Use buffering
-	- vectored I/O, positional I/O and async I/O
+  - Minimize I/O operations (coalescing)
+  - Perform block aligned I/O
+  - Use buffering
+  - vectored I/O, positional I/O and async I/O
 - We can also sort I/O requests before sending them to the kernel
-- Sectors are mapped to physical blocks so block storage can be addressed by blocks (logical block addressing, LBA) instead of cylinders, heads and sectors
-- Filesystems are purely software, and talk in terms of logical blocks
-- Logical block size is a multiple of physical block size
+  - Sectors are mapped to physical blocks so block storage can be addressed by blocks (logical block addressing, LBA) instead of cylinders, heads and sectors
+  - Filesystems are purely software, and talk in terms of logical blocks
+  - Logical block size is a multiple of physical block size
 - Sorting writes in the application:
-	- One way to do that is pathname -> poor approximation
-	- Another is inode number -> breaks with more fragmentation
-	- Or you can try to sort by physical block:
-		- Each file is broken into logical blocks
-		- You can get the physical block from logical block:
-```c
-ret = ioctl (fd, FIBMAP, &block);
-```
-		- The logical blocks are zero-indexed and file-relative 
-		- First determine number of blocks in a file via `fstat`
-		- Then, for each logical block, find the physical block via `ioctl`
-	- Since files tend to be contiguous and we will mostly want to order I/O for a given file, just use the 0th block to sort:
-```c
-int logical_block = 0;
-ioctl(fd, FIBMAP, &logical_block);
-```
+  - One way to do that is pathname -> poor approximation
+  - Another is inode number -> breaks with more fragmentation
+  - Or you can try to sort by physical block:
+    - Each file is broken into logical blocks
+    - You can get the physical block from logical block:
+    ```c
+      ret = ioctl (fd, FIBMAP, &block);
+    ```
+    - The logical blocks are zero-indexed and file-relative 
+    - First determine number of blocks in a file via `fstat`
+    - Then, for each logical block, find the physical block via `ioctl`
+    - Since files tend to be contiguous and we will mostly want to order I/O for a given file, just use the 0th block to sort:
+    ```c
+    int logical_block = 0;
+    ioctl(fd, FIBMAP, &logical_block);
+    ```
 
 
