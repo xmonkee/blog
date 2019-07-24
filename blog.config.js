@@ -1,13 +1,13 @@
 module.exports = {
   siteMeta: {
-    title: 'xmonkee',
-    author: 'Mayank Mandava',
-    image: '/static/site-feature.png',
-    description: 'xmonkee\'s personal blog',
-    siteUrl: 'https://xmonkee.com',
+    title: "Mayank Mandava",
+    author: "Mayank Mandava",
+    image: "/static/site-feature.png",
+    description: "Mayank's personal blog",
+    siteUrl: "https://xmonkee.com",
     social: {
-      twitter: 'xmonkee'
+      twitter: "xmonkee"
     },
     postsPerPage: 5
   }
-}
+};
