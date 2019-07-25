@@ -1,0 +1,104 @@
+import { withRouter } from "next/router";
+import BlogPost from "../../components/layouts/blog-post";
+
+export const meta = {
+  published: true,
+  publishedAt: "2018-07-24",
+  title: "Linux System Programming by Robert Love [Chapters 5-8]",
+  summary: "Reading Notes",
+  image: "/static/linux-system-programming.jpg"
+};
+
+export default withRouter(({ children, router }) => (
+  <BlogPost path={router.pathname} meta={meta}>
+    {children}
+  </BlogPost>
+));
+
+#### Chapter 5 - Processes
+
+- A binary is a compiled blob of code
+- A process is a running program, includes
+  - the binary image
+  - virtualized memory instance
+  - kernel resources like open files
+  - security context like user
+  - one or more threads
+  - a thread has a virtualized processor, stack, registers and instruction pointer
+  - in a single threaded process, the process IS the thread
+  - all threads share the same memory
+- A process has a PID that's guaranteed to be unique _at a given moment_
+- The _idle_ process has PID 0
+- The first process is called the init process (pid 1)
+- The kernel tries the following _init_ programs:
+  - /sbin/init
+  - /etc/init
+  - /bin/init
+  - /bin/sh
+- The init process handles the remainder of the boot process, launching services and a login program
+- The kernel keeps monotinically increasing the PID till it wraps around
+- Every process (child) is spawned from another process (parent)
+- Each process has a ppid(parent pid)
+- Each process inherits the parent's UID and GID
+- Processes belong to process groups. Normally children have the same group as the parent
+- when you do a `ls | less` both `ls` and `less` will have the same process group
+- to get your own pid:
+
+```c
+#include <sys/types.h>
+#include <unistd.h>
+// returns the process ID of the invoking process
+pid_t getpid (void);
+// returns the process ID of the invoking process’s parent
+pid_t getppid (void);
+// Neither call will return an error
+printf ("My pid=%jd\n", (intmax_t) getpid ());
+printf ("Parent's pid=%jd\n", (intmax_t) getppid ());
+// intmax_t is guaranteed to be larger than any int on the system
+```
+
+##### Running processes
+
+- `fork` creates a near duplicate of the parent process
+- `exec` family of calls loads a binary into memory, replacing the previous program, and executes it
+- to execute a new program, you have to fist `fork`, then `exec`
+
+```c
+#include <unistd.h>
+int ret;
+  ret = execl ("/bin/vi", "vi", "/home/kidd/hooks.txt", NULL);
+  // Arguments must be NULL terminated
+  if (ret == −1)
+    perror ("execl");
+```
+
+- normally, execl does not return since there's nothing to return to
+- it clears out most attributes of the calling process including signals and locks
+- it keeps the open file ids. They should be either manually closed or using `fcntl`
+- In addition, we have `execlp`, `execle`, `execv`, `execvp`, `execve`
+  - `l` means list, `v` mean array (variadic vs array args)
+  - `e` means it takes a new environment
+  - `p` means it seaches the PATH for the filename
+
+```c
+#include <unistd.h>
+#include <sys/types.h>
+#include <stdio.h>
+
+int main() {
+    int pid = fork();
+    if(pid == -1) {
+        perror("fork"); return 1;
+    }
+    if(pid == 0) { //child
+        int ret;
+        ret = execlp("ls", "ls", NULL);
+        if (ret == -1) {
+            perror("exec"); return 1;
+        }
+    } else {
+        printf("Parent\\n");
+    }
+
+}
+```
