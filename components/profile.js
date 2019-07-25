@@ -1,26 +1,25 @@
-import { siteMeta } from '../blog.config'
+import { siteMeta } from "../blog.config";
 
 const Profile = () => (
-  <div className='h-card profile'>
-    <img className='u-photo' src='/static/me.jpeg' alt={siteMeta.author} />
+  <div className="h-card profile">
+    <img className="u-photo" src="/static/me.jpeg" alt={siteMeta.author} />
 
     <div>
       <p>
-        Hi, I'm{' '}
-        <a className='u-url p-name' href={siteMeta.siteUrl} rel='me'>
+        Hi, I'm{" "}
+        <a className="u-url p-name" href={siteMeta.siteUrl} rel="me">
           {siteMeta.author}
         </a>
       </p>
-      <p className='p-note'>
-        I'm a software engineer.
-      </p>
+      <p className="p-note">I'm a software engineer.</p>
     </div>
     <style jsx>{`
       .profile {
         display: flex;
         align-items: center;
         padding: 1em;
-        background-color: #eee;
+        color: #dcdcdc;
+        background: #2d2d2d;
       }
 
       img {
@@ -33,6 +32,6 @@ const Profile = () => (
       }
     `}</style>
   </div>
-)
+);
 
-export default Profile
+export default Profile;

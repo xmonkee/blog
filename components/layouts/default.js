@@ -1,9 +1,9 @@
-import React from 'react'
-import Header from '../header'
-import Footer from '../footer'
-import Container from '../container'
+import React from "react";
+import Header from "../header";
+import Footer from "../footer";
+import Container from "../container";
 
-function Layout ({ path, children, pageTitle, ogImage }) {
+function Layout({ path, children, pageTitle, ogImage }) {
   return (
     <Container>
       <Header path={path} pageTitle={pageTitle} ogImage={ogImage} />
@@ -12,7 +12,7 @@ function Layout ({ path, children, pageTitle, ogImage }) {
 
       <Footer />
     </Container>
-  )
+  );
 }
 
-export default Layout
+export default Layout;

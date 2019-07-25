@@ -1,152 +1,180 @@
-code[class*='language-'],
-pre[class*='language-'] {
-  color: #f8f8f2;
-  background: none;
-  font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+/*
+
+Name:       Base16 Atelier Plateau Light
+Author:     Bram de Haan (http://atelierbram.github.io/syntax-highlighting/atelier-schemes/plateau)
+
+Prism template by Bram de Haan (http://atelierbram.github.io/syntax-highlighting/prism/)
+Original Base16 color scheme by Chris Kempson (https://github.com/chriskempson/base16)
+
+*/
+code[class*="language-"],
+pre[class*="language-"] {
+  font-family: Consolas, Menlo, Monaco, "Andale Mono WT", "Andale Mono",
+    "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono",
+    "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L",
+    "Courier New", Courier, monospace;
+  font-size: 14px;
+  line-height: 1.375;
+  direction: ltr;
   text-align: left;
   white-space: pre;
   word-spacing: normal;
   word-break: normal;
-  word-wrap: normal;
-  line-height: 1.5;
-
   -moz-tab-size: 4;
   -o-tab-size: 4;
   tab-size: 4;
-
   -webkit-hyphens: none;
-  -moz-hyphens: none;
   -ms-hyphens: none;
   hyphens: none;
+  background: #f4ecec;
+  color: #585050;
 }
 
-pre[class*='language-'] {
+pre[class*="language-"]::-moz-selection,
+pre[class*="language-"] ::-moz-selection,
+code[class*="language-"]::-moz-selection,
+code[class*="language-"] ::-moz-selection {
+  text-shadow: none;
+  background: #e7dfdf;
+}
+
+pre[class*="language-"]::selection,
+pre[class*="language-"] ::selection,
+code[class*="language-"]::selection,
+code[class*="language-"] ::selection {
+  text-shadow: none;
+  background: #e7dfdf;
+}
+
+/* Code blocks */
+pre[class*="language-"] {
   padding: 1em;
   margin: 0.5em 0;
   overflow: auto;
-  border-radius: 0.3em;
 }
 
-:not(pre) > code[class*='language-'],
-pre[class*='language-'] {
-  background: #2b2b2b;
-}
-
-:not(pre) > code[class*='language-'] {
+/* Inline code */
+:not(pre) > code[class*="language-"] {
   padding: 0.1em;
   border-radius: 0.3em;
-  white-space: normal;
 }
 
 .token.comment,
 .token.prolog,
 .token.doctype,
 .token.cdata {
-  color: #d4d0ab;
+  color: #7e7777;
 }
 
 .token.punctuation {
-  color: #fefefe;
+  color: #585050;
 }
 
-.token.property,
-.token.tag,
-.token.constant,
-.token.symbol,
-.token.deleted {
-  color: #ffa07a;
-}
-
-.token.boolean,
-.token.number {
-  color: #00e0e0;
-}
-
-.token.selector,
-.token.attr-name,
-.token.string,
-.token.char,
-.token.builtin,
-.token.inserted {
-  color: #abe338;
+.token.namespace {
+  opacity: 0.7;
 }
 
 .token.operator,
+.token.boolean,
+.token.number {
+  color: #b45a3c;
+}
+
+.token.property {
+  color: #a06e3b;
+}
+
+.token.tag {
+  color: #7272ca;
+}
+
+.token.string {
+  color: #5485b6;
+}
+
+.token.selector {
+  color: #8464c4;
+}
+
+.token.attr-name {
+  color: #b45a3c;
+}
+
 .token.entity,
 .token.url,
 .language-css .token.string,
-.style .token.string,
-.token.variable {
-  color: #00e0e0;
+.style .token.string {
+  color: #5485b6;
 }
 
-.token.atrule,
 .token.attr-value,
-.token.function {
-  color: #ffd700;
+.token.keyword,
+.token.control,
+.token.directive,
+.token.unit {
+  color: #4b8b8b;
 }
 
-.token.keyword {
-  color: #00e0e0;
-}
-
+.token.statement,
 .token.regex,
-.token.important {
-  color: #ffd700;
+.token.atrule {
+  color: #5485b6;
+}
+
+.token.placeholder,
+.token.variable {
+  color: #7272ca;
+}
+
+.token.deleted {
+  text-decoration: line-through;
+}
+
+.token.inserted {
+  border-bottom: 1px dotted #1b1818;
+  text-decoration: none;
+}
+
+.token.italic {
+  font-style: italic;
 }
 
 .token.important,
 .token.bold {
   font-weight: bold;
 }
-.token.italic {
-  font-style: italic;
+
+.token.important {
+  color: #ca4949;
 }
 
 .token.entity {
   cursor: help;
 }
 
-@media screen and (-ms-high-contrast: active) {
-  code[class*='language-'],
-  pre[class*='language-'] {
-    color: windowText;
-    background: window;
-  }
+pre > code.highlight {
+  outline: 0.4em solid #ca4949;
+  outline-offset: 0.4em;
+}
 
-  :not(pre) > code[class*='language-'],
-  pre[class*='language-'] {
-    background: window;
-  }
+.line-numbers .line-numbers-rows {
+  border-right-color: #e7dfdf !important;
+}
 
-  .token.important {
-    background: highlight;
-    color: window;
-    font-weight: normal;
-  }
+.line-numbers-rows > span:before {
+  color: #8a8585 !important;
+}
 
-  .token.atrule,
-  .token.attr-value,
-  .token.function,
-  .token.keyword,
-  .token.operator,
-  .token.selector {
-    font-weight: bold;
-  }
-
-  .token.attr-value,
-  .token.comment,
-  .token.doctype,
-  .token.function,
-  .token.keyword,
-  .token.operator,
-  .token.property,
-  .token.string {
-    color: highlight;
-  }
-
-  .token.attr-value,
-  .token.url {
-    font-weight: normal;
-  }
+.line-highlight {
+  background: rgba(27, 24, 24, 0.2) !important;
+  background: -webkit-linear-gradient(
+    left,
+    rgba(27, 24, 24, 0.2) 70%,
+    rgba(27, 24, 24, 0)
+  ) !important;
+  background: linear-gradient(
+    to right,
+    rgba(27, 24, 24, 0.2) 70%,
+    rgba(27, 24, 24, 0)
+  ) !important;
 }

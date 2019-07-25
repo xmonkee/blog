@@ -1,10 +1,10 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import Head from './head'
-import Nav from './nav'
-import Title from './title'
+import React from "react";
+import PropTypes from "prop-types";
+import Head from "./head";
+import Nav from "./nav";
+import Title from "./title";
 
-function Header ({ path, pageTitle, ogImage }) {
+function Header({ path, pageTitle, ogImage }) {
   return (
     <>
       <Head title={pageTitle} ogImage={ogImage} />
@@ -20,6 +20,7 @@ function Header ({ path, pageTitle, ogImage }) {
             display: flex;
             align-items: center;
             justify-content: space-between;
+            margin-bottom: 1em;
           }
         `}
       </style>
@@ -39,11 +40,15 @@ function Header ({ path, pageTitle, ogImage }) {
           body {
             margin: 0;
             font-size: 18px;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-              Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
-            color: #333;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+              Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+            color: #555;
             line-height: 1.5;
-            background-color: #fff;
+            background-color: #f9f9f9;
+          }
+
+          strong {
+            color: #333;
           }
 
           h1,
@@ -52,7 +57,7 @@ function Header ({ path, pageTitle, ogImage }) {
           h4 {
             margin-bottom: 0.5rem;
             font-weight: bold;
-            color: inherit;
+            color: #333;
             line-height: 1.25;
           }
 
@@ -83,7 +88,7 @@ function Header ({ path, pageTitle, ogImage }) {
           }
 
           a {
-            color: #33e;
+            color: #d64937;
             cursor: pointer;
           }
 
@@ -132,13 +137,13 @@ function Header ({ path, pageTitle, ogImage }) {
         `}
       </style>
     </>
-  )
+  );
 }
 
 Header.propTypes = {
   path: PropTypes.string,
   pageTitle: PropTypes.string,
   ogImage: PropTypes.string
-}
+};
 
-export default Header
+export default Header;

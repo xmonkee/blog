@@ -1,19 +1,19 @@
-import { withRouter } from 'next/router'
-import BlogPost from '../../components/layouts/blog-post'
+import { withRouter } from "next/router";
+import BlogPost from "../../components/layouts/blog-post";
 
 export const meta = {
   published: true,
-  publishedAt: '2018-07-15',
-  title: 'Linux System Programming by Robert Love [Chapters 1-4]',
-  summary: 'Reading Notes',
-  image: '/static/site-feature.png',
-}
+  publishedAt: "2018-07-15",
+  title: "Linux System Programming by Robert Love [Chapters 1-4]",
+  summary: "Reading Notes",
+  image: "/static/linux-system-programming.jpg"
+};
 
 export default withRouter(({ children, router }) => (
   <BlogPost path={router.pathname} meta={meta}>
     {children}
   </BlogPost>
-))
+));
 
 #### Chapter 1 - Introduction
 
@@ -31,25 +31,34 @@ if (close (fd) == −1)
 
 #### Chapter 2 - File I/O
 
-- Opening files: 
+- Opening files:
+
 ```c
 fd = open(<path>, flags)
 ```
-- create: 
+
+- create:
+
 ```c
 fd = open (file, O_WRONLY | O_CREAT | O_TRUNC, 0664);
 ```
-- is identical to 
+
+- is identical to
+
 ```c
 fd = creat (filename, 0644);
 ```
+
 - fd of -1 indicates error
 - reading:
+
 ```c
 #include <unistd.h>
 ssize_t read (int fd, void *buf, size_t len);
 ```
+
 - A call to read() can result in many possibilitie, to read all the bytes
+
 ```c
 ssize_t ret;
 while (len != 0 && (ret = read (fd, buf, len)) != 0) {
@@ -63,39 +72,50 @@ while (len != 0 && (ret = read (fd, buf, len)) != 0) {
   buf += ret;
 }
 ```
+
 - nonblocking reads can be achieved by passing O_NONBLOCK to `open`
 - if a read is blocked, it will return -1 and errno will be set to EAGAIN
 - write:
+
 ```c
 #include <unistd.h>
 ssize_t write (int fd, const void *buf, size_t count);
 ```
+
 - call fsync(int ft) to sync writes to storage
 - fdatasync(int fd) does the same thing, without updated metadata, and is faster
 - use the O_SYNC flag to always sync
 - closing:
+
 ```c
 #include <unistd.h>
 int close(int fd)`
 ```
+
 - seeking:
+
 ```c
 #include <sys/types.h>
 #include <unistd.h>
 off_t lseek (int fd, off_t pos, int origin);
 ```
+
 - you CAN seek past the end of a file, it will be padded with zeros
 - position reads and writes avoid the race condtion associated with seeking and then reading
+
 ```c
 #define _XOPEN_SOURCE 500
 #include <unistd.h>
 ssize_t pread (int fd, void *buf, size_t count, off_t pos);
 ssize_t pwrite (int fd, const void *buf, size_t count, off_t pos);
 ```
+
 ##### Multiplexed IO
+
 - `poll()` is easier to use than `select()`
 - both wait on a set of open file descriptors and return when any are available
 - poll example
+
 ```c
 #include <stdio.h>
 #include <poll.h>
@@ -106,7 +126,7 @@ int main(int argc, char **argv)
 		struct pollfd fds[2];
 		fds[0].fd = STDIN_FILENO;
 		fds[0].events = POLLIN;
-		
+
 		fds[1].fd = STDOUT_FILENO;
 		fds[1].events = POLLOUT;
 
@@ -115,21 +135,23 @@ int main(int argc, char **argv)
 			perror("poll");
 			return -1;
 		}
-		
+
 		if (fds[0].revents & POLLIN) {
 			printf("STDIN ready\\n");
 		}
 		if (fds[1].revents & POLLOUT) {
 			printf("STDOUT ready\\n");
 		}
-		
+
 		return 0;
 }
 ```
+
 - The VFS provides a unified blocks and inodes based interface to all filesystems
 - The page cache holds retrieved info including readaheads
 
 ### Chapter 3 - Buffered I/O
+
 - Usually more efficient to read in multiples of 4096 or 8192 bytes because of block alignment
 - User space buffered IO can increase performance even more
 - Write to a buffer, which is written in a single operation
@@ -138,33 +160,40 @@ int main(int argc, char **argv)
 - Provided by `stdio`
 - StardardI/O routines act on file pointers, not fds
 - `FILE` type defined in `stdio.h`
+
 ```c
 FILE * fopen (const char *path, const char *mode);
 FILE * fdopen (int fd, const char *mode);
 ```
+
 - modes: r, w, r+ (read+write), w+ (read, write, truncates), a+(rw in append mode)
 - Closing the stream will close the file descriptor as well.
+
 ```c
 int fclose (FILE *stream);
 int fcloseall (void); // Linux specific
 ```
+
 - reading
+
 ```c
 // read a char
-int fgetc (FILE *stream); 
+int fgetc (FILE *stream);
 // put it back
-int ungetc (int c, FILE *stream); 
+int ungetc (int c, FILE *stream);
 // read a line
 // reads one char less than size and puts a \0 at the end
 // will stop and newline and also put a \n
-char * fgets (char *str, int size, FILE *stream); 
+char * fgets (char *str, int size, FILE *stream);
 // Read binary data
 // reads `nr` elements, each of size `size`
 // returns less than nr if there's an error
 // it is impossible to know which of the two conditions occurred without using ferror() and feof()
 size_t fread (void *buf, size_t size, size_t nr, FILE *stream);
 ```
+
 - writing
+
 ```c
 // write a char
 // return EOF in case of error
@@ -175,10 +204,12 @@ int fputs (const char *str, FILE *stream);
 // A return value less than nr denotes error.
 size_t fwrite (void *buf, size_t size, size_t nr, FILE *stream);
 ```
+
 - It’s important to bear in mind that because of differences in variable sizes, align‐
-ment, and so on, binary data written with one application may not be readable by other
-applications.
+  ment, and so on, binary data written with one application may not be readable by other
+  applications.
 - Example program
+
 ```c
 
 # include <stdio.h>
@@ -189,7 +220,7 @@ int main(int arc, char **argv) {
 			unsigned long booty;
 			unsigned int beard_len;
 	} p, blackbeard = {"Mayank", 100, 50};
-	
+
 	FILE * file = fopen("/tmp/pirate", "w");
 	if (!file) {
 		perror("fopen");
@@ -219,22 +250,29 @@ int main(int arc, char **argv) {
 	printf("%s, %lu, %u", p.name, p.booty, p.beard_len);
 }
 ```
+
 - other
+
 ```c
 int fseek (FILE *stream, long offset, int whence);
 // fsetpos, rewind, ftell, fgetpos for seeking
 // fflush flushes the data to the kernel (but does not sync)
 fileno(*stream) gets the fd
 ```
+
 - errors
+
 ```c
 ferror(FILE *stream) returns non-zero if error is set
 feof() returns nonzero if EOF is set
 clearerr() clears the error
 ```
+
 ##### Threading
+
 - Standard io functions are thread safe
 - For multipl functions, use explicit locks
+
 ```c
 flockfile(*stream) locks a file (blocking) by incrementing lock count
 funlockfile(*stream) decrements lock count
@@ -242,9 +280,12 @@ ftrylockfile(*stream) is non-blocking, returning nonzero if cannot lock
 ```
 
 #### Chapter 4: Advanced File I/O
+
 ##### Scatter/Gather I/O
+
 - The idea is to write several buffers to a file or to read several buffers from a file
 - The buffers are read and written in serial order, but very efficiently by the kernel
+
 ```c
 #include <sys/uio.h>
 struct iovec {
@@ -254,9 +295,12 @@ struct iovec {
 ssize_t readv (int fd, const struct iovec *iov, int count);
 ssize_t writev (int fd, const struct iovec *iov, int count);
 ```
+
 ##### epoll
-- easier to use than `poll` and `select`, but linux specific 
+
+- easier to use than `poll` and `select`, but linux specific
 - decouples creating a listener, adding fds and waiting on it
+
 ```c
 #include <stdio.h>
 #include <sys/epoll.h>
@@ -295,10 +339,12 @@ int main() {
 ##### MMAP
 
 - mmap maps a file into memory
+
 ```c
 #include <sys/mman.h>
 void * mmap (void *addr, size_t len, int prot, int flags, int fd, off_t offset);
 ```
+
 - `prot` is protection mode - `PROT_READ`, `PROT_WRITE`, `PROT_EXEC`
 - it should match the open mode of the file
 - flags:
@@ -309,17 +355,22 @@ void * mmap (void *addr, size_t len, int prot, int flags, int fd, off_t offset);
 - mapping increments the file's reference counter
 - `addr` and `offset` must be aligned on a page boundary
 - to get page size
+
 ```c
 long page_size = sysconf(_SC_PAGESIZE); // <unistd.h>
 // or
 int getpagesize(void);
 ```
+
 - to remove mapping:
+
 ```c
 int munmap(void *arrd, size_t len);
 ```
+
 - will remove all mappings in the given range
 - example
+
 ```c
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -367,6 +418,7 @@ int main(int argc, char *argv[]) {
 
 }
 ```
+
 - advantages of mmap:
   - avoids the extra copy that happens to a user space buffer when using `read` and `write`
   - there's no system call overhead to read from memory
@@ -375,10 +427,8 @@ int main(int argc, char *argv[]) {
 - `mremap` to change size of mapping
 - glib often uses `mremap` to implement `realloc`
 - `mprotect` to change protection of a mapping
-- `msync` to sync changes back to disk
-	- should always be called because kernel does not know that memory has been modified, unlike `write`'s dirty buffers
-- `madvise` to give the kernel a hint about usage of map
-	- usually related to amount of readahead (more for sequential, none for random)
+- `msync` to sync changes back to disk - should always be called because kernel does not know that memory has been modified, unlike `write`'s dirty buffers
+- `madvise` to give the kernel a hint about usage of map - usually related to amount of readahead (more for sequential, none for random)
 - `posix_fadvise` is very similar, but for normal I/O (not mmap)
 
 ##### Asynchronous I/O
@@ -386,6 +436,7 @@ int main(int argc, char *argv[]) {
 - The book here is very brief. The following notes are from the aio(7) man page
 
 - The POSIX AIO interface consists of the following functions:
+
 ```c
 #include <aiocb.h>
 
@@ -409,17 +460,20 @@ struct aiocb {
 	int             aio_lio_opcode; /* Operation to be performed;
 };
 ```
+
 - You can either poll the status of the request (with `aio_error`) or have the completion fire a signal
 - You can ask the request to signal via `aiocbp->aio_sigevent.sigev_notify = SIGEV_SIGNAL`
-- You can also ask it to spawn a thread 
+- You can also ask it to spawn a thread
 - If `aio_error` is not EINPROGRESS, you can use `aio_return` to get the return value (of the corresponding `read()` operation for example)
 
 ##### I/O Schedulers and I/O performance
+
 - Scheduler is set in `/sys/block/[device]/queue/scheduler`
 - The scheduler would try to sequence reads and writes on disk efficiently
 - It performs merges (combining reads in adjecent blocks) and sorting
 - Since writes are streamed (async), they can starve the reads (`writes-starving-reads`)
-- The Deadline scheduler 
+- The Deadline scheduler
+
   - keeps a sorted list of operations (sorted by physical block)
   - keeps a FIFO queue of read operations and a FIFO queue of write operations
   - read ops have a deadline of 500ms and write ops 6s
@@ -427,8 +481,8 @@ struct aiocb {
 
 - My current machine with an NMVe SSD disc uses mq-deadline (multiqueue)
 
-
 ##### Optimizing IO
+
 - There are many optimizations that can be done on the application side:
   - Minimize I/O operations (coalescing)
   - Perform block aligned I/O
@@ -447,7 +501,7 @@ struct aiocb {
     ```c
       ret = ioctl (fd, FIBMAP, &block);
     ```
-    - The logical blocks are zero-indexed and file-relative 
+    - The logical blocks are zero-indexed and file-relative
     - First determine number of blocks in a file via `fstat`
     - Then, for each logical block, find the physical block via `ioctl`
     - Since files tend to be contiguous and we will mostly want to order I/O for a given file, just use the 0th block to sort:
@@ -455,5 +509,3 @@ struct aiocb {
     int logical_block = 0;
     ioctl(fd, FIBMAP, &logical_block);
     ```
-
-

@@ -1,18 +1,17 @@
-import Link from 'next/link'
-import PublishedAt from './utils/published-at'
+import Link from "next/link";
+import PublishedAt from "./utils/published-at";
 
 const Post = ({ title, summary, date, path }) => (
   <article>
     <header>
-      <h2>
+      <h3>
         <Link href={path}>
           <a>{title}</a>
         </Link>
-      </h2>
-
+      </h3>
+      <h4 className="post-summary">{summary}</h4>
       <PublishedAt link={path} date={date} />
     </header>
-    <div className='post-summary'>{summary}</div>
     <style jsx>{`
       article {
         margin-bottom: 2em;
@@ -23,10 +22,10 @@ const Post = ({ title, summary, date, path }) => (
       }
 
       .post-summary {
-        margin-top: 1em;
+        margin-top: 0.5em;
       }
     `}</style>
   </article>
-)
+);
 
-export default Post
+export default Post;

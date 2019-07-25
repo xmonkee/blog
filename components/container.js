@@ -7,6 +7,6 @@ const Container = ({ children }) => (
       padding: 0 1em;
     `}</style>
   </>
-)
+);
 
-export default Container
+export default Container;
