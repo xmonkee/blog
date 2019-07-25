@@ -40,8 +40,7 @@ function Header({ path, pageTitle, ogImage }) {
           body {
             margin: 0;
             font-size: 18px;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-              Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+            font-family: "Roboto", sans-serif;
             color: #555;
             line-height: 1.5;
             background-color: #f9f9f9;

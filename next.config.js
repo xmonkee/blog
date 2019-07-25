@@ -1,7 +1,7 @@
 const withMDX = require("@zeit/next-mdx")({
   extension: /.mdx?$/,
   options: {
-    hastPlugins: [require("@mapbox/rehype-prism")]
+    hastPlugins: [require("mdx-prism")]
   }
 });
 
