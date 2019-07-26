@@ -11,7 +11,7 @@ function Header({ path, pageTitle, ogImage }) {
 
       <header>
         <Title />
-        <Nav />
+        {/* <Nav /> */}
       </header>
       <style jsx>
         {`
@@ -21,8 +21,11 @@ function Header({ path, pageTitle, ogImage }) {
             margin: 0 auto 1em auto;
             padding: 1em 0;
             display: flex;
+            flex-wrap: wrap;
+            flex-direction: row;
             align-items: center;
-            justify-content: space-between;
+            justify-content: space-around;
+            text-align: center;
           }
         `}
       </style>
@@ -41,6 +44,7 @@ function Header({ path, pageTitle, ogImage }) {
 
           body {
             margin: 0;
+            overflow-x: hide;
             font-family: "Lato", "Roboto", sans-serif;
             line-height: 1.6;
             font-weight: 300;
