@@ -56,6 +56,7 @@ function Header({ path, pageTitle, ogImage }) {
                 rgba(0, 5, 94, 0.4)
               ),
               url(/static/landscape.jpg);
+            background-size: 100%;
           }
 
           strong {

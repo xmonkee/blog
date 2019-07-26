@@ -8,6 +8,7 @@ const Container = ({ children }) => (
       border-radius: 1rem;
       background: white;
       box-shadow: 0px 0px 20px -3px rgba(000, 0, 200, 0.45);
+      overflow-x: auto;
     `}</style>
   </>
 );

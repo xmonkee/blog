@@ -9,15 +9,16 @@ const Title = () => (
     <style jsx>{`
       a {
         text-decoration: none;
-        border-bottom: none;
+        // border-bottom: none;
         color: #eee;
       }
 
       p {
         margin-top: auto;
         margin-bottom: auto;
-        font-size: 4em;
+        font-size: 3em;
         font-family: "Permanent Marker", "Roboto", sans-serif;
+        text-align: center;
       }
     `}</style>
   </p>
