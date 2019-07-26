@@ -1,20 +1,20 @@
-import Link from 'next/link'
+import Link from "next/link";
 
 const Nav = () => (
   <nav>
-    <Link href='/about'>
+    <Link href="/about">
       <a>About</a>
     </Link>
     <style jsx>{`
-      nav {
-        display: flex;
-      }
-
-      a:not(:last-child) {
-        margin-right: 1em;
+      a {
+        color: #eee;
+        font-size: 2em;
+        text-decoration: none;
+        border-bottom: none;
+        font-family: "Permanent Marker", "Roboto", sans-serif;
       }
     `}</style>
   </nav>
-)
+);
 
-export default Nav
+export default Nav;

@@ -1,49 +1,31 @@
-/*
+/**
+ * atom-dark theme for `prism.js`
+ * Based on Atom's `atom-dark` theme: https://github.com/atom/atom-dark-syntax
+ * @author Joe Gibson (@gibsjose)
+ */
 
-Name:       Base16 Atelier Plateau Light
-Author:     Bram de Haan (http://atelierbram.github.io/syntax-highlighting/atelier-schemes/plateau)
-
-Prism template by Bram de Haan (http://atelierbram.github.io/syntax-highlighting/prism/)
-Original Base16 color scheme by Chris Kempson (https://github.com/chriskempson/base16)
-
-*/
 code[class*="language-"],
 pre[class*="language-"] {
-  font-family: Consolas, Menlo, Monaco, "Andale Mono WT", "Andale Mono",
-    "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono",
-    "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L",
-    "Courier New", Courier, monospace;
-  font-size: 14px;
-  line-height: 1.375;
+  color: #c5c8c6;
+  text-shadow: 0 1px rgba(0, 0, 0, 0.3);
   direction: ltr;
   text-align: left;
   white-space: pre;
   word-spacing: normal;
   word-break: normal;
+  line-height: 1.5;
+  background: inherit;
+  padding: 0;
+  margin: 0;
+
   -moz-tab-size: 4;
   -o-tab-size: 4;
   tab-size: 4;
+
   -webkit-hyphens: none;
+  -moz-hyphens: none;
   -ms-hyphens: none;
   hyphens: none;
-  background: #f4ecec;
-  color: #585050;
-}
-
-pre[class*="language-"]::-moz-selection,
-pre[class*="language-"] ::-moz-selection,
-code[class*="language-"]::-moz-selection,
-code[class*="language-"] ::-moz-selection {
-  text-shadow: none;
-  background: #e7dfdf;
-}
-
-pre[class*="language-"]::selection,
-pre[class*="language-"] ::selection,
-code[class*="language-"]::selection,
-code[class*="language-"] ::selection {
-  text-shadow: none;
-  background: #e7dfdf;
 }
 
 /* Code blocks */
@@ -51,6 +33,12 @@ pre[class*="language-"] {
   padding: 1em;
   margin: 0.5em 0;
   overflow: auto;
+  border-radius: 0.3em;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+  background: #20003d;
 }
 
 /* Inline code */
@@ -63,118 +51,98 @@ pre[class*="language-"] {
 .token.prolog,
 .token.doctype,
 .token.cdata {
-  color: #7e7777;
+  color: #7c7c7c;
 }
 
 .token.punctuation {
-  color: #585050;
+  color: #c5c8c6;
 }
 
-.token.namespace {
+.namespace {
   opacity: 0.7;
 }
 
-.token.operator,
-.token.boolean,
-.token.number {
-  color: #b45a3c;
-}
-
-.token.property {
-  color: #a06e3b;
-}
-
+.token.property,
+.token.keyword,
 .token.tag {
-  color: #7272ca;
+  color: #96cbfe;
 }
 
-.token.string {
-  color: #5485b6;
+.token.class-name {
+  color: #ffffb6;
+  text-decoration: underline;
 }
 
-.token.selector {
-  color: #8464c4;
+.token.boolean,
+.token.constant {
+  color: #99cc99;
 }
 
-.token.attr-name {
-  color: #b45a3c;
+.token.symbol,
+.token.deleted {
+  color: #f92672;
 }
 
-.token.entity,
-.token.url,
+.token.number {
+  color: #ff73fd;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+  color: #a8ff60;
+}
+
+.token.variable {
+  color: #c6c5fe;
+}
+
+.token.operator {
+  color: #ededed;
+}
+
+.token.entity {
+  color: #ffffb6;
+  /* text-decoration: underline; */
+}
+
+.token.url {
+  color: #96cbfe;
+}
+
 .language-css .token.string,
 .style .token.string {
-  color: #5485b6;
+  color: #87c38a;
 }
 
-.token.attr-value,
-.token.keyword,
-.token.control,
-.token.directive,
-.token.unit {
-  color: #4b8b8b;
+.token.atrule,
+.token.attr-value {
+  color: #f9ee98;
 }
 
-.token.statement,
-.token.regex,
-.token.atrule {
-  color: #5485b6;
+.token.function {
+  color: #dad085;
 }
 
-.token.placeholder,
-.token.variable {
-  color: #7272ca;
+.token.regex {
+  color: #e9c062;
 }
 
-.token.deleted {
-  text-decoration: line-through;
-}
-
-.token.inserted {
-  border-bottom: 1px dotted #1b1818;
-  text-decoration: none;
-}
-
-.token.italic {
-  font-style: italic;
+.token.important {
+  color: #fd971f;
 }
 
 .token.important,
 .token.bold {
   font-weight: bold;
 }
-
-.token.important {
-  color: #ca4949;
+.token.italic {
+  font-style: italic;
 }
 
 .token.entity {
   cursor: help;
-}
-
-pre > code.highlight {
-  outline: 0.4em solid #ca4949;
-  outline-offset: 0.4em;
-}
-
-.line-numbers .line-numbers-rows {
-  border-right-color: #e7dfdf !important;
-}
-
-.line-numbers-rows > span:before {
-  color: #8a8585 !important;
-}
-
-.line-highlight {
-  background: rgba(27, 24, 24, 0.2) !important;
-  background: -webkit-linear-gradient(
-    left,
-    rgba(27, 24, 24, 0.2) 70%,
-    rgba(27, 24, 24, 0)
-  ) !important;
-  background: linear-gradient(
-    to right,
-    rgba(27, 24, 24, 0.2) 70%,
-    rgba(27, 24, 24, 0)
-  ) !important;
 }

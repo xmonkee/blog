@@ -10,17 +10,19 @@ function Header({ path, pageTitle, ogImage }) {
       <Head title={pageTitle} ogImage={ogImage} />
 
       <header>
-        <Title path={path} />
+        <Title />
         <Nav />
       </header>
       <style jsx>
         {`
           header {
+            color: white;
+            max-width: 55rem;
+            margin: 0 auto 1em auto;
             padding: 1em 0;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 1em;
           }
         `}
       </style>
@@ -39,11 +41,17 @@ function Header({ path, pageTitle, ogImage }) {
 
           body {
             margin: 0;
-            font-size: 18px;
-            font-family: "Roboto", sans-serif;
+            font-family: "Lato", "Roboto", sans-serif;
+            line-height: 1.6;
+            font-weight: 300;
+            font-size: 1.2rem;
             color: #555;
-            line-height: 1.5;
-            background-color: #f9f9f9;
+            background-image: linear-gradient(
+                to right,
+                rgba(191, 0, 255, 0.4),
+                rgba(0, 5, 94, 0.4)
+              ),
+              url(/static/landscape.jpg);
           }
 
           strong {
@@ -62,6 +70,7 @@ function Header({ path, pageTitle, ogImage }) {
 
           h1 {
             font-size: 2rem;
+            font-family: "Permanent Marker", "Roboto", sans-serif;
           }
 
           h2 {
@@ -87,13 +96,15 @@ function Header({ path, pageTitle, ogImage }) {
           }
 
           a {
-            color: #d64937;
+            color: #1d0091;
             cursor: pointer;
+            text-decoration: none;
+            // border-bottom: 6px solid #b000cd;
           }
 
           a:hover,
           a:focus {
-            text-decoration: underline;
+            border-bottom: 8px solid #ffaaff;
           }
 
           hr {

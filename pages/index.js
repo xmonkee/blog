@@ -26,9 +26,7 @@ const Blog = ({ router, page = 1 }) => {
 
   return (
     <Layout pageTitle="Blog" path={router.pathname}>
-      <header>
-        <img src="/static/monkey.jpg" />
-      </header>
+      <header></header>
 
       {blogposts
         .filter((_post, index) => results.indexOf(index) > -1)

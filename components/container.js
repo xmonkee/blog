@@ -2,9 +2,12 @@ const Container = ({ children }) => (
   <>
     <div>{children}</div>
     <style jsx>{`
-      max-width: 45rem;
-      margin: 0 auto;
-      padding: 0 1em;
+      max-width: 55rem;
+      margin: 2em auto 2em auto;
+      padding: 2em 2em;
+      border-radius: 1rem;
+      background: #f5f5ff;
+      box-shadow: 0px 0px 20px -3px rgba(000, 0, 200, 0.45);
     `}</style>
   </>
 );

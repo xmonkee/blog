@@ -52,8 +52,8 @@ pid_t getpid (void);
 // returns the process ID of the invoking process’s parent
 pid_t getppid (void);
 // Neither call will return an error
-printf ("My pid=%jd\n", (intmax_t) getpid ());
-printf ("Parent's pid=%jd\n", (intmax_t) getppid ());
+printf ("My pid=%jd\\n", (intmax_t) getpid ());
+printf ("Parent's pid=%jd\\n", (intmax_t) getppid ());
 // intmax_t is guaranteed to be larger than any int on the system
 ```
 

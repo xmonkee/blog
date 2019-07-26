@@ -2,13 +2,13 @@ import { siteMeta } from "../blog.config";
 
 const Profile = () => (
   <div className="h-card profile">
-    <img className="u-photo" src="/static/me.jpeg" alt={siteMeta.author} />
+    <img className="u-photo" src="/static/me.jpg" alt={siteMeta.author} />
 
     <div>
       <p>
         Hi, I'm{" "}
-        <a className="u-url p-name" href={siteMeta.siteUrl} rel="me">
-          {siteMeta.author}
+        <a className="u-url p-name" href="/about" rel="me">
+          Mayank
         </a>
       </p>
       <p className="p-note">I'm a software engineer.</p>
@@ -17,13 +17,14 @@ const Profile = () => (
       .profile {
         display: flex;
         align-items: center;
-        padding: 1em;
-        border: 1px solid #d64937;
       }
 
       img {
         width: 5em;
+        height: 5em;
         margin-right: 0.5em;
+        border-radius: 1000px;
+        object-fit: cover;
       }
 
       p:last-child {

@@ -4,11 +4,11 @@ import PublishedAt from "./utils/published-at";
 const Post = ({ title, summary, date, path }) => (
   <article>
     <header>
-      <h3>
+      <h1>
         <Link href={path}>
           <a>{title}</a>
         </Link>
-      </h3>
+      </h1>
       <h4 className="post-summary">{summary}</h4>
       <PublishedAt link={path} date={date} />
     </header>

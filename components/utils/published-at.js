@@ -16,6 +16,7 @@ function PublishedAt(props) {
       <style jsx>{`
         a {
           text-decoration: none;
+          border-bottom: none;
         }
       `}</style>
     </>

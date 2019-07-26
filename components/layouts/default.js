@@ -5,13 +5,14 @@ import Container from "../container";
 
 function Layout({ path, children, pageTitle, ogImage }) {
   return (
-    <Container>
+    <div>
       <Header path={path} pageTitle={pageTitle} ogImage={ogImage} />
+      <Container>
+        <main>{children}</main>
 
-      <main>{children}</main>
-
-      <Footer />
-    </Container>
+        <Footer />
+      </Container>
+    </div>
   );
 }
 

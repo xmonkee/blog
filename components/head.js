@@ -19,8 +19,12 @@ const Head = props => (
     />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href="/static/favicon.ico" />
+    {/* <link
+      href="https://fonts.googleapis.com/css?family=Permanent+Marker|Roboto&display=swap"
+      rel="stylesheet"
+    /> */}
     <link
-      href="https://fonts.googleapis.com/css?family=Roboto:100,400&display=swap"
+      href="https://fonts.googleapis.com/css?family=Lato|Permanent+Marker|Roboto&display=swap"
       rel="stylesheet"
     />
 

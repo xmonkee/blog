@@ -9,12 +9,13 @@ export default () => (
     <style jsx global>
       {`
         code {
-          font-size: 0.8em;
-          color: #555555;
+          background: linear-gradient(to right, #dcccff, #dcbbff);
+          color: #333;
           padding: 0.1em 0.2em;
-          background-color: #dedede;
           border-radius: 0.2em;
-          margin: 0em 0.3em;
+          margin: 0em 0.1em;
+          font-size: 0.9em;
+          box-shadow: 1px 1px 4px -3px rgba(0, 0, 0, 0.75);
         }
       `}
     </style>

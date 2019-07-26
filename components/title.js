@@ -1,37 +1,26 @@
 import Link from "next/link";
 import { siteMeta } from "../blog.config";
 
-const Title = ({ path }) => (
-  <>
-    {path === "/" ? (
-      <h1>
-        <a href={siteMeta.siteUrl}>{siteMeta.title}</a>
-      </h1>
-    ) : (
-      <p>
-        <Link href="/">
-          <a rel="me">{siteMeta.title}</a>
-        </Link>
-      </p>
-    )}
+const Title = () => (
+  <p>
+    <Link href="/">
+      <a rel="me">{siteMeta.title}</a>
+    </Link>
     <style jsx>{`
-      h1 {
-        margin-top: auto;
-        margin-bottom: auto;
-      }
-
       a {
-        color: #333;
         text-decoration: none;
+        border-bottom: none;
+        color: #eee;
       }
 
       p {
-        font-size: 1.3em;
-        font-weight: bold;
-        margin-bottom: 0;
+        margin-top: auto;
+        margin-bottom: auto;
+        font-size: 4em;
+        font-family: "Permanent Marker", "Roboto", sans-serif;
       }
     `}</style>
-  </>
+  </p>
 );
 
 export default Title;

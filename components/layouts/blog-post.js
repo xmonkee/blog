@@ -19,7 +19,7 @@ function BlogPost({ path, meta, children }) {
       <SyntaxHighlight />
       <article className="h-entry">
         <header>
-          <h2 className="p-name">{meta.title}</h2>
+          <h1 className="p-name">{meta.title}</h1>
 
           <div>
             <PublishedAt date={meta.publishedAt} link={path} />
@@ -51,7 +51,6 @@ function BlogPost({ path, meta, children }) {
       <style jsx>{`
         header {
           margin-bottom: 2em;
-          padding: 1em;
         }
 
         [rel="author"] {
