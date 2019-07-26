@@ -51,11 +51,7 @@ function BlogPost({ path, meta, children }) {
       <style jsx>{`
         header {
           margin-bottom: 2em;
-          background: #2d2d2d;
           padding: 1em;
-        }
-        header * {
-          color: #dcdcdc;
         }
 
         [rel="author"] {

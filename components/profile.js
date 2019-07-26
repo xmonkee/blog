@@ -18,8 +18,7 @@ const Profile = () => (
         display: flex;
         align-items: center;
         padding: 1em;
-        color: #dcdcdc;
-        background: #2d2d2d;
+        border: 1px solid #d64937;
       }
 
       img {
