@@ -1,0 +1,221 @@
+import { useEffect, useRef } from "react";
+import css from "styled-jsx/css";
+import { withRouter } from "next/router";
+import BlogPost from "../../components/layouts/blog-post";
+
+export const meta = {
+  published: true,
+  publishedAt: "2018-07-27",
+  title: "Placing a background image on a scrolling page",
+  summary: "There's more than one way to place a background image",
+  image:
+    "https://images.unsplash.com/photo-1563892666069-4541177dc655?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max"
+};
+
+export const MaxAndrey = () => (
+  <a
+    style={{
+      backgroundColor: "black",
+      color: "white",
+      textDecoration: "none",
+      padding: "4px 6px",
+      fontFamily:
+        '-apple-system, BlinkMacSystemFont, "San Francisco", "Helvetica Neue", Helvetica, Ubuntu, Roboto, Noto, "Segoe UI", Arial, sans-serif',
+      fontSize: 12,
+      fontWeight: "bold",
+      lineHeight: "1.2",
+      display: "inline-block",
+      borderRadius: 3
+    }}
+    href="https://unsplash.com/@maxandrey?utm_medium=referral&utm_campaign=photographer-credit&utm_content=creditBadge"
+    target="\_blank"
+    rel="noopener noreferrer"
+    title="Download free do whatever you want high-resolution photos from Max Andrey"
+  >
+    <span style={{ display: "inline-block", padding: "2px 3px" }}>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        style={{
+          height: 12,
+          width: "auto",
+          position: "relative",
+          verticalAlign: "middle",
+          top: "-2px",
+          fill: "white"
+        }}
+        viewBox="0 0 32 32"
+      >
+        <title>unsplash-logo</title>
+        <path d="M10 9V0h12v9H10zm12 5h10v18H0V14h10v9h12v-9z" />
+      </svg>
+    </span>
+    <span style={{ display: "inline-block", padding: "2px 3px" }}>
+      Max Andrey
+    </span>
+  </a>
+);
+
+export function Example({ cname, children, pctScroll }) {
+  const outerEl = useRef(null);
+  useEffect(() => {
+    if (!pctScroll) return;
+    const scrollTopMax = outerEl.current.scrollTopMax;
+    outerEl.current.onscroll = () => {
+      const scrollTopPercentage = outerEl.current.scrollTop / scrollTopMax;
+      outerEl.current.style.backgroundPositionY = `${scrollTopPercentage *
+        100}%`;
+    };
+  });
+  return (
+    <div className={`scrollouter ${cname}`} ref={outerEl}>
+      <div className="inner">
+        <div className="content">
+          <div>1</div>
+          <div>2</div>
+          <div>3</div>
+        </div>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+export default withRouter(({ children, router }) => (
+  <BlogPost path={router.pathname} meta={meta}>
+    <div className="content">{children}</div>
+    <style jsx global>{`
+      .scrollouter {
+        height: 250px;
+        width: 250px;
+        margin: 100px auto;
+        box-shadow: 1px 1px 3px 2px rgba(0, 0, 0, 0.2);
+        box-sizing: border-box;
+        border: 3px solid red;
+        overflow-y: auto;
+        background-image: url(/static/sea.jpg);
+      }
+      scrollouter .inner {
+        height: auto;
+        width: 100%;
+      }
+      .scrollouter .content {
+        width: 100%;
+        text-align: center;
+      }
+      .scrollouter .content div {
+        color: white;
+        text-shadow: 1px 1px 2px black;
+        font-size: 3em;
+        height: 200px;
+      }
+    `}</style>
+  </BlogPost>
+));
+
+I wanted a background image on this blog (shout out to <MaxAndrey /> for my current lovely background):
+
+```css
+body {
+  background-image: url(/static/sea.jpg);
+}
+```
+
+But I wasn't sure how to deal with scrolling.
+
+I didn't want to scale the image vertically, since that destroys the aspect ratio:
+
+```css
+background-repeat: no-repeat;
+background-size: 100% 100%;
+background-attachment: local;
+```
+
+<Example cname="stretched">
+  <style jsx global>{`
+    .stretched {
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+      background-attachment: local;
+    }
+  `}</style>
+</Example>
+
+And I didn't want to repeat the image, since that just looks terrible:
+
+```css
+background-repeat: repeat;
+background-size: 100%;
+background-attachment: local;
+```
+
+<Example cname="repeat">
+  <style jsx global>{`
+    .repeat {
+      background-repeat: repeat;
+      background-size: 100%;
+      background-attachment: local;
+    }
+  `}</style>
+</Example>
+
+One easy solution is to just set your `background-attachment` to `scroll`
+(or `fixed` if it's the body background). Read more about it [here](https://developer.mozilla.org/en-US/docs/Web/CSS/background-attachment).
+This makes the image fixed wrt to the parent element:
+
+```css
+background-repeat: no-repeat;
+background-size: 100%;
+background-attachment: scroll;
+```
+
+<Example cname="fixed">
+  <style jsx global>{`
+    .fixed {
+      background-repeat: no-repeat;
+      background-size: 100%;
+      background-attachment: scroll;
+    }
+  `}</style>
+</Example>
+
+But I didn't love this either because it doesn't let me show off the whole image.
+I wanted the background image to scroll at the same _percentage_ as the content,
+and not the same number of pixels. That means, at the end of the content,
+you are also at the end of the backgroud image, like this:
+
+<Example cname="justright" pctScroll={true}>
+  <style jsx global>{`
+    .justright {
+      background-repeat: no-repeat;
+      background-size: 100%;
+    }
+  `}</style>
+</Example>
+
+My CSS knowledge extends to reading MDN pages and throwing things at people, so I coulnd't
+figure it out. But it was easy enough to do in javascript. The basic idea being:
+
+1. Listen to the scroll event on the parent element
+1. Find out how much the content is scrolled in percentage terms
+1. Set the background position at the same percentage
+
+```javascript
+const scrollTopMax = outerEl.scrollTopMax;
+outerEl.onscroll = () => {
+  const scrollTopPercentage = outerEl.scrollTop / scrollTopMax;
+  outerEl.style.backgroundPositionY = `${scrollTopPercentage * 100}%`;
+};
+```
+
+For the body background, just replace outerEl with `document.scrollingElement`, and set the style on `document.body`
+
+```javascript
+const scrollTopMax = document.scrollingElement.scrollTopMax;
+document.body.onscroll = () => {
+  const scrollTopPercentage =
+    document.scrollingElement.scrollTop / scrollTopMax;
+  document.body.style.backgroundPositionY = `${scrollTopPercentage * 100}%`;
+};
+```
+
+And that is exactly what this page does.
