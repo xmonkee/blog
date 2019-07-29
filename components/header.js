@@ -1,17 +1,17 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import Head from "./head";
 import Nav from "./nav";
 import Title from "./title";
 
 function Header({ path, pageTitle, ogImage }) {
-
   useEffect(() => {
-    const scrollTopMax = document.scrollingElement.scrollTopMax;
+    const el = document.scrollingElement;
+    const scrollTopMax = el.scrollHeight - el.clientHeight;
     document.body.onscroll = () => {
-      const scrollTopPercentage = document.scrollingElement.scrollTop/scrollTopMax
+      const scrollTopPercentage = Math.min(1.0, el.scrollTop / scrollTopMax);
       document.body.style.backgroundPositionY = `${scrollTopPercentage * 100}%`;
-    }
+    };
   });
 
   return (
