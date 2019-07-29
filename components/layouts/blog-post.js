@@ -65,6 +65,10 @@ function BlogPost({ path, meta, children }) {
           margin-top: 2em;
         }
 
+        .e-content {
+          margin-top: 2em;
+        }
+
         .post-pagination {
           display: grid;
           grid-template-columns: 1fr 1fr;

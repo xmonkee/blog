@@ -1,14 +1,22 @@
-import React from "react";
+import React, {useEffect} from "react";
 import PropTypes from "prop-types";
 import Head from "./head";
 import Nav from "./nav";
 import Title from "./title";
 
 function Header({ path, pageTitle, ogImage }) {
+
+  useEffect(() => {
+    const scrollTopMax = document.scrollingElement.scrollTopMax;
+    document.body.onscroll = () => {
+      const scrollTopPercentage = document.scrollingElement.scrollTop/scrollTopMax
+      document.body.style.backgroundPositionY = `${scrollTopPercentage * 100}%`;
+    }
+  });
+
   return (
     <>
       <Head title={pageTitle} ogImage={ogImage} />
-
       <header>
         <Title />
         {/* <Nav /> */}
@@ -50,13 +58,10 @@ function Header({ path, pageTitle, ogImage }) {
             font-weight: 300;
             font-size: 1.2rem;
             color: #555;
-            background-image: linear-gradient(
-                to right,
-                rgba(191, 0, 255, 0.4),
-                rgba(0, 5, 94, 0.4)
-              ),
-              url(/static/landscape.jpg);
-            background-size: 100%;
+            background-image: url(/static/sea.jpg);
+            background-size: 100% 200%;
+            background-position: 0% 0%;
+            background-attachment: fixed;
           }
 
           strong {

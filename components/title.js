@@ -17,6 +17,7 @@ const Title = () => (
         margin-top: auto;
         margin-bottom: auto;
         font-size: 3em;
+        font-weight: bold;
         font-family: "Permanent Marker", "Roboto", sans-serif;
         text-align: center;
       }
