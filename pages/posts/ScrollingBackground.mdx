@@ -221,3 +221,34 @@ document.body.onscroll = () => {
 ```
 
 And that is exactly what this page does.
+
+### Update (2019-07-29)
+
+Based on a [suggestion](https://www.reddit.com/r/webdev/comments/cjcdjg/how_to_place_a_background_image_on_a_scrolling/evd6pfx?utm_source=share&utm_medium=web2x) by reddit user _howdoigetauniquename_,
+it turns out that using a `transform` is much smoother than setting the background position. It does involve moving the background to a new `div`
+
+```css
+#background {
+  position: fixed;
+  background-image: url("/static/sea.jpg");
+  width: 100%;
+  height: 150%;
+  background-size: 100% 100%;
+  background-position: 0% 0%;
+  z-index: -1;
+}
+```
+
+I've set the height of the div to be `150%` of the width since that's the aspect ratio of our image.
+We want to move this `33.33%` up at the bottom of the scroll to see the full picture.
+
+```javascript
+const backgroundEl = document.getElementbyId("background");
+const el = document.scrollingElement;
+const scrollTopMax = el.scrollHeight - el.clientHeight;
+document.body.onscroll = () => {
+  const scrollTopPercentage = Math.min(1.0, el.scrollTop / scrollTopMax);
+  const translate = 33.33 * scrollTopPercentage;
+  backgroundEl.style.transform = `translate(0%,-${translate}%)`;
+};
+```

@@ -1,22 +1,26 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import Head from "./head";
 import Nav from "./nav";
 import Title from "./title";
 
 function Header({ path, pageTitle, ogImage }) {
+  const background = useRef(null);
   useEffect(() => {
     const el = document.scrollingElement;
     const scrollTopMax = el.scrollHeight - el.clientHeight;
     document.body.onscroll = () => {
       const scrollTopPercentage = Math.min(1.0, el.scrollTop / scrollTopMax);
-      document.body.style.backgroundPositionY = `${scrollTopPercentage * 100}%`;
+      const translate = 33.33 * scrollTopPercentage;
+      if (background.current)
+        background.current.style.transform = `translate(0%,-${translate}%)`;
     };
   });
 
   return (
     <>
       <Head title={pageTitle} ogImage={ogImage} />
+      <div id="background" ref={background} />
       <header>
         <Title />
         {/* <Nav /> */}
@@ -58,10 +62,16 @@ function Header({ path, pageTitle, ogImage }) {
             font-weight: 300;
             font-size: 1.2rem;
             color: #555;
-            background-image: url(/static/sea.jpg);
-            background-size: 100% 200%;
+          }
+
+          #background {
+            position: fixed;
+            background-image: url("/static/sea.jpg");
+            height: 150%;
+            width: 100%;
+            background-size: 100% 100%;
             background-position: 0% 0%;
-            background-attachment: fixed;
+            z-index: -1;
           }
 
           strong {
